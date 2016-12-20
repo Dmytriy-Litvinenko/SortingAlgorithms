@@ -6,6 +6,8 @@ import java.util.Random;
 
 public class Main {
 
+    static long quickIterationsCounter;
+
     public static int bubbleSort(int [] arr, boolean asc){
 
         int itereations=0;
@@ -26,19 +28,21 @@ public class Main {
                 }
                 itereations++;
             }
+            //System.out.println(Arrays.toString(arr));
         }
         return itereations;
     }
 
     public static void quickSort ( int[]array,int begin, int end)
     {
+
         int left = begin, right = end;
         int middleTemp = array[(left + right) / 2];
 
         while (left <= right)
         {
-            while (array[left] < middleTemp) left++;
-            while (array[right] > middleTemp) right--;
+            while (array[left] < middleTemp) {left++;quickIterationsCounter++;}
+            while (array[right] > middleTemp) {right--;quickIterationsCounter++;}
 
             if (left <= right){
                 int temp = array[left];
@@ -46,6 +50,8 @@ public class Main {
                 array[right] = temp;
                 left++;
                 right--;
+                quickIterationsCounter++;
+                //System.out.println(Arrays.toString(array)+", b = " +begin+", l = " + left +", r = "+right+", e = "+end+", middleTemp = " + middleTemp);
             }
         }
 
@@ -65,22 +71,41 @@ public class Main {
 
     public static void main(String[] args) {
 
-        int size=100;
+        int size=10;
         int [] array= new int[size];
-        int [] arrayCopy=new int[size];
+        int [] arrayForQuickSort=new int[size];
 
         fillWithRandomValues(array);
-        //fillWithRandomValues(arrayCopy);
-        for (int i = 0; i < arrayCopy.length; i++) arrayCopy[i]=array[i];
+        for (int i = 0; i < arrayForQuickSort.length; i++) arrayForQuickSort[i]=array[i];
 
         System.out.println(Arrays.toString(array));
-        System.out.println(Arrays.toString(arrayCopy));
-        System.out.println("The number of iterations  is: " + bubbleSort(arrayCopy, true) +
-                ", and size*(size-1)/2 = "+(size*(size-1)/2));
-        //quickSort(arrayCopy,0,arrayCopy.length-1);
-        System.out.println(Arrays.toString(arrayCopy));
+        System.out.println(Arrays.toString(arrayForQuickSort));
 
+        System.out.println("\tQuickSort algorithm");
+        quickIterationsCounter=0;
+        long startTimeQuickSort = System.currentTimeMillis();
+        quickSort(arrayForQuickSort,0,arrayForQuickSort.length-1);
+        long stopTimeQuickSort = System.currentTimeMillis();
+        long elapsedTimeQuickSort = stopTimeQuickSort - startTimeQuickSort;
+        System.out.println("The number of iterations  is: " + quickIterationsCounter +
+                ",\nsize*Ln(size) = " + (long)Math.ceil(size*Math.log(size))
+                + ",\nelapsed time = " + elapsedTimeQuickSort
+                +" ms,\nelapsedTime/iterations=" + ((double)elapsedTimeQuickSort/quickIterationsCounter)
+                + "\nsorted array: " + Arrays.toString(arrayForQuickSort)
+        );
+        //System.out.println(Arrays.toString(arrayForQuickSort));
 
+        System.out.println("\tBubbleSort algorithm:\n");
+        long startTimeBubble = System.currentTimeMillis();
+        int bubbleSortIterations = bubbleSort(array, true);
+        long stopTimeBubble = System.currentTimeMillis();
+        long elapsedTimeBubble = stopTimeBubble - startTimeBubble;
 
+        System.out.println("The number of iterations  is: " + bubbleSortIterations +
+                ",\nsize*(size-1)/2 = " + (size*(size-1)/2)
+                + ",\nelapsed time = " + elapsedTimeBubble +" ms.\n"+
+                "elapsedTime/iterations=" +((double)elapsedTimeBubble/bubbleSortIterations)
+        );
+        System.out.println(Arrays.toString(array));
     }
 }
